@@ -31,7 +31,7 @@ public class MailUtil {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 
         simpleMailMessage.setSubject(ApplicationContstants.MAIL_TITLE +
-                messageSource.getMessage(MessagesConstants.MAIL + "subject" + mailType, null, locale));
+                messageSource.getMessage(MessagesConstants.MAIL + "subject." + mailType, null, locale));
         simpleMailMessage.setText(
                 messageSource.getMessage(MessagesConstants.MAIL + "message." + mailType, null, locale)
         );
@@ -60,18 +60,18 @@ public class MailUtil {
         MimeMessage mimeMessage = mailSender(
                 mailTemplate,
                 mailAddress,
-                String.format(Objects.requireNonNull(mailTemplate.getText()),
-                        ApplicationContstants.FRONTEND_ADDRESS + "forgot-password?token=" + passwordResetToken));
+                Objects.requireNonNull(mailTemplate.getText()) +
+                        ApplicationContstants.FRONTEND_ADDRESS+"forgot-password?token="+passwordResetToken);
         javaMailSender.send(mimeMessage);
     }
 
     public void sendActivationMail(String mailAddress, String activationToken, Locale locale) {
-        SimpleMailMessage mailTemplate = mailTemplate("activate.account", locale);
+        SimpleMailMessage mailTemplate = mailTemplate("activation", locale);
         MimeMessage mimeMessage = mailSender(
                 mailTemplate,
                 mailAddress,
-                String.format(Objects.requireNonNull(mailTemplate.getText()),
-                        ApplicationContstants.FRONTEND_ADDRESS + "activation?token=" + activationToken));
+                Objects.requireNonNull(mailTemplate.getText()) +
+                        ApplicationContstants.FRONTEND_ADDRESS+"activation?token="+activationToken);
         javaMailSender.send(mimeMessage);
     }
 }
