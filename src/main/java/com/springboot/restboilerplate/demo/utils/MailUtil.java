@@ -56,7 +56,7 @@ public class MailUtil {
     }
 
     public void sendPasswordResetMail(String mailAddress, String passwordResetToken, Locale locale) {
-        SimpleMailMessage mailTemplate = mailTemplate("password.reset", locale);
+        SimpleMailMessage mailTemplate = mailTemplate("reset.password", locale);
         MimeMessage mimeMessage = mailSender(
                 mailTemplate,
                 mailAddress,
