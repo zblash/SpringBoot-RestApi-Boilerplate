@@ -7,6 +7,7 @@ import com.springboot.restboilerplate.demo.errors.BadRequestException;
 import com.springboot.restboilerplate.demo.errors.HttpMessage;
 import com.springboot.restboilerplate.demo.models.User;
 import com.springboot.restboilerplate.demo.services.user.UserService;
+import com.springboot.restboilerplate.demo.utils.MailUtil;
 import com.springboot.restboilerplate.demo.utils.RandomStringGenerator;
 import com.springboot.restboilerplate.demo.utils.mappers.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 @RestController
@@ -33,6 +35,8 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private MailUtil mailUtil;
 
     @PostMapping("/signin")
     public ResponseEntity<?> login(@RequestBody WritableLogin writableLogin, WebRequest request) {
@@ -63,19 +67,20 @@ public class AuthController {
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<ReadableRegister> signUp(@Valid @RequestBody WritableRegister writableRegister) {
+    public ResponseEntity<ReadableRegister> signUp(@Valid @RequestBody WritableRegister writableRegister, Locale locale) {
         User user = UserMapper.writableRegisterToUser(writableRegister);
         if (userService.canRegister(user)) {
             user.setStatus(false);
+            user.setActivationToken(RandomStringGenerator.generateId());
             User createdUser = userService.create(user, writableRegister.getRoleType());
-
+            mailUtil.sendActivationMail(user.getEmail(), user.getActivationToken(), locale);
             return ResponseEntity.ok(UserMapper.userToReadableRegister(createdUser));
         }
         throw new BadRequestException("Username or email already registered");
     }
 
     @PutMapping("/forgot-password")
-    public ResponseEntity<HttpMessage> forgottenPassword(@RequestBody WritableForgotPassword writableForgotPassword, WebRequest request) {
+    public ResponseEntity<HttpMessage> forgottenPassword(@RequestBody WritableForgotPassword writableForgotPassword, WebRequest request, Locale locale) {
         User user;
         if (!writableForgotPassword.getEmail().isEmpty()) {
             user = userService.findByEmail(writableForgotPassword.getEmail());
@@ -87,7 +92,7 @@ public class AuthController {
         user.setPasswordResetToken(RandomStringGenerator.generateId());
         user.setResetTokenExpireTime(
                 Date.from(LocalDateTime.now().plus(1, ChronoUnit.DAYS).atZone(ZoneId.systemDefault()).toInstant()));
-//        email service
+        mailUtil.sendPasswordResetMail(user.getEmail(), user.getPasswordResetToken(), locale);
         userService.update(user.getId(), user);
         HttpMessage httpMessage = new HttpMessage(HttpStatus.OK);
         httpMessage.setMessage("Password reset token has been sent to to your email");
@@ -110,6 +115,13 @@ public class AuthController {
         throw new BadRequestException("Fields not matching");
     }
 
+    @PutMapping("/activation")
+    public ResponseEntity<ReadableUserInfo> userActivation(@Valid @RequestBody WritableActivation writableActivation) {
+        User user = userService.findByActivationToken(writableActivation.getActivationToken());
+        user.setStatus(true);
+        return ResponseEntity.ok(UserMapper.userToReadableUserInfo(userService.update(user.getId(), user)));
+    }
+
     @PostMapping("/api/user/changePassword")
     public ResponseEntity<HttpMessage> changeUserPassword(@Valid @RequestBody WritablePasswordChange writablePasswordReset, WebRequest request) {
         User user = userService.getLoggedInUser();
@@ -123,5 +135,6 @@ public class AuthController {
         }
         throw new BadRequestException("Fields not matching");
     }
+
 
 }

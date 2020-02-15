@@ -1,0 +1,14 @@
+spring:
+  mail:
+    debug: true
+    host: your.mail.host
+    port: 111
+    username: your.mail.username
+    password: your.mail.password
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true

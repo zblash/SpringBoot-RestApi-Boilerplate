@@ -132,4 +132,9 @@ public class UserServiceImpl implements UserService {
         User user = findByUserName(username);
         return passwordEncoder.matches(password, user.getPassword()) && user.isStatus();
     }
+
+    @Override
+    public User findByActivationToken(String activationToken) {
+        return userRepository.findByActivationToken(activationToken).orElseThrow(() -> new ResourceNotFoundException(MessagesConstants.RESOURCES_NOT_FOUND+"user", activationToken));
+    }
 }
