@@ -53,4 +53,8 @@ public class User implements Serializable {
     @JoinColumn(name = "role_id",referencedColumnName = "id")
     private Role role;
 
+    @PrePersist
+    public void autofill() {
+        this.setUuid(UUID.randomUUID());
+    }
 }
