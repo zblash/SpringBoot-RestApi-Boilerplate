@@ -1,5 +1,6 @@
 package com.springboot.restboilerplate.demo.configs.security;
 
+import com.springboot.restboilerplate.demo.configs.StringToEnumConverterFactory;
 import com.springboot.restboilerplate.demo.configs.security.JWTAuthentication.JWTAuthEntryPoint;
 import com.springboot.restboilerplate.demo.configs.security.JWTAuthentication.JWTAuthenticationFilter;
 import com.springboot.restboilerplate.demo.configs.security.JWTAuthentication.JWTAuthenticationProvider;
@@ -7,6 +8,7 @@ import com.springboot.restboilerplate.demo.configs.security.JWTAuthentication.JW
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -74,5 +76,10 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
         AntPathMatcher matcher = new AntPathMatcher();
         matcher.setCaseSensitive(false);
         configurer.setPathMatcher(matcher);
+    }
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverterFactory(new StringToEnumConverterFactory());
     }
 }
