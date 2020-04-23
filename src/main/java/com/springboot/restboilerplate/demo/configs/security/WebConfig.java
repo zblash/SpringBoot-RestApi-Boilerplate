@@ -30,11 +30,14 @@ import java.util.Collections;
 @EnableWebSecurity
 public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
-    @Autowired
-    private JWTAuthenticationProvider autheticationProvider;
+    private final JWTAuthenticationProvider autheticationProvider;
 
-    @Autowired
-    private JWTAuthEntryPoint authEntryPoint;
+    private final JWTAuthEntryPoint authEntryPoint;
+
+    public WebConfig(JWTAuthenticationProvider autheticationProvider, JWTAuthEntryPoint authEntryPoint) {
+        this.autheticationProvider = autheticationProvider;
+        this.authEntryPoint = authEntryPoint;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

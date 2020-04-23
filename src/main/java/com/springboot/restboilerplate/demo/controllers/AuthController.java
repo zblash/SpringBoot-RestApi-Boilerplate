@@ -32,11 +32,14 @@ import java.util.Map;
 @RestController
 public class AuthController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private MailUtil mailUtil;
+    private final MailUtil mailUtil;
+
+    public AuthController(UserService userService, MailUtil mailUtil) {
+        this.userService = userService;
+        this.mailUtil = mailUtil;
+    }
 
     @PostMapping("/signin")
     public ResponseEntity<?> login(@RequestBody WritableLogin writableLogin, WebRequest request) {

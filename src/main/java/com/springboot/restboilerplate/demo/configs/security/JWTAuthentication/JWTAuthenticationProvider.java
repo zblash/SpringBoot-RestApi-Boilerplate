@@ -22,8 +22,11 @@ import java.util.List;
 @Component
 public class JWTAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public JWTAuthenticationProvider(UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
