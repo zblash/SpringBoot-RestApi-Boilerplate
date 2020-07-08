@@ -18,10 +18,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+public class JWTAuthorizationFilter extends AbstractAuthenticationProcessingFilter {
 
-    public JWTAuthenticationFilter() {
-        super("/api/**");
+    public JWTAuthorizationFilter() {
+        super("/private/**");
     }
 
     @Override

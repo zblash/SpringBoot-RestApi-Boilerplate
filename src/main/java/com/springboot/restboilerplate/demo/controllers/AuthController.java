@@ -125,7 +125,7 @@ public class AuthController {
         return ResponseEntity.ok(UserMapper.userToReadableUserInfo(userService.update(user.getId(), user)));
     }
 
-    @PostMapping("/api/user/changePassword")
+    @PostMapping("/private/user/changePassword")
     public ResponseEntity<HttpMessage> changeUserPassword(@Valid @RequestBody WritablePasswordChange writablePasswordReset, WebRequest request) {
         User user = userService.getLoggedInUser();
 

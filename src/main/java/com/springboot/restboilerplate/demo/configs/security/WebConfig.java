@@ -2,10 +2,9 @@ package com.springboot.restboilerplate.demo.configs.security;
 
 import com.springboot.restboilerplate.demo.configs.StringToEnumConverterFactory;
 import com.springboot.restboilerplate.demo.configs.security.JWTAuthentication.JWTAuthEntryPoint;
-import com.springboot.restboilerplate.demo.configs.security.JWTAuthentication.JWTAuthenticationFilter;
+import com.springboot.restboilerplate.demo.configs.security.JWTAuthentication.JWTAuthorizationFilter;
 import com.springboot.restboilerplate.demo.configs.security.JWTAuthentication.JWTAuthenticationProvider;
 import com.springboot.restboilerplate.demo.configs.security.JWTAuthentication.JWTSuccessHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
@@ -49,9 +48,9 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
     }
 
     @Bean
-    public JWTAuthenticationFilter authTokenFilter() {
+    public JWTAuthorizationFilter authTokenFilter() {
 
-        JWTAuthenticationFilter filter =new JWTAuthenticationFilter();
+        JWTAuthorizationFilter filter =new JWTAuthorizationFilter();
         filter.setAuthenticationManager(authenticationManager());
         filter.setAuthenticationSuccessHandler(new JWTSuccessHandler());
         return filter;
